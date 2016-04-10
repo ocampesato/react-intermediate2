@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>React Canvas</title>
+
+  <script src="https://fb.me/react-15.0.0-rc.2.js"> </script>
+  <script src="https://fb.me/react-dom-15.0.0-rc.2.js"> </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js">
+  </script>
+</head>
+
+<body>
+ <canvas width="600" height="500" id="mycanvas"></canvas>
+
+ <script type="text/babel">
+  // http://jsfiddle.net/JMZc5/1/
+  class Graphic extends React.Component{ 
+    constructor() { 
+      super();
+    }
+
+    componentDidMount() {
+      var context = document.getElementById('mycanvas').getContext('2d');
+      this.paint(context);
+    }
+  
+    componentDidUpdate() {
+      var context = document.getElementById('mycanvas').getContext('2d');
+      context.clearRect(0, 0, 200, 200);
+      this.paint(context);
+    }
+  
+    paint(context) {
+      context.save();
+      context.translate(100, 100);
+      context.rotate(this.props.rotation, 100, 100);
+      context.fillStyle = '#F00';
+      context.fillRect(-50, -50, 100, 100);
+      context.restore();
+    }
+  
+    render() {
+      return <canvas width={600} height={500} />;
+    }
+  }
+  
+  class App extends React.Component{
+    constructor() { 
+      super();
+      this.tick = this.tick.bind(this);
+      this.state = { rotation: 0 };
+    }
+
+    componentDidMount() {
+      requestAnimationFrame(this.tick);
+    }
+  
+    tick() {
+      this.setState({ rotation: this.state.rotation + .01 });
+      requestAnimationFrame(this.tick);
+    }
+  
+    render() {
+      return <div><Graphic rotation={this.state.rotation} /></div>
+    }
+  }
+  
+  ReactDOM.render(<App />, document.getElementById('mycanvas'));
+ </script>
+</body>
+</html>
+

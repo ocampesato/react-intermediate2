@@ -1,0 +1,8 @@
+extends layout
+
+block content
+    h1.
+        List of Users 
+    ul
+        each user, i in userlist
+            li #{user.fname} | #{user.lname}

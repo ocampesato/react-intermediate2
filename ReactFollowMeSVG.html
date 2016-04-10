@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <meta charset="utf-8">
+  <title>ReactJS Follow Me</title>
+
+  <script src="https://fb.me/react-15.0.0-rc.2.js"> </script>
+  <script src="https://fb.me/react-dom-15.0.0-rc.2.js"> </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js">
+  </script>
+ </head>
+
+ <body>
+   <div id="mysvg"></div>
+
+   <script type="text/babel">
+    class SVGFollow extends React.Component {
+     constructor() {
+        super();
+        this.onMouseMove = this.onMouseMove.bind(this); 
+        document.addEventListener('mousemove', this.onMouseMove)
+        this.state = { XPoints : [0], YPoints : [0], Keys : [0], count : 0 };
+     } 
+
+     componentDidMount() {
+        this.setState({ XPoints : [0], YPoints : [0]}, function() {
+        // console.log("YPoints[0] = "+this.state.YPoints[0]);
+        // console.log("XPoints[0] = "+this.state.XPoints[0]);
+        });
+     }
+
+     onMouseMove(e) {
+        var xpts = this.state.XPoints;
+        xpts.push(e.pageX);
+        this.setState({XPoints : xpts});
+
+        var ypts = this.state.YPoints;
+        ypts.push(e.pageY);
+        this.setState({YPoints : ypts});
+
+        var count = this.state.count;
+        var mykeys = this.state.Keys;
+        mykeys.push(++count);
+        this.setState({Keys: mykeys});
+        this.setState({count: count});
+      }
+
+      render() {
+        let rx=20, ry=40;
+        let colors = ["#f00", "#0f0", "#0ff", "#ff0", "#f0f", "#0ff"];
+        let YPoints = this.state.YPoints;
+        let mykeys  = this.state.Keys;
+
+        let shapes = this.state.XPoints.map(function(xpos, index) {
+           return (
+             <ellipse key={mykeys[index]} cx={xpos} cy={YPoints[index]} 
+                      rx={rx} ry={ry} fill={colors[xpos%colors.length]}/>
+           )
+         }) 
+
+         return (
+            <svg width="600" height="500"> 
+              <g> 
+              {shapes} 
+              </g> 
+            </svg> 
+         )
+      } 
+    }
+
+    ReactDOM.render(<SVGFollow />, document.getElementById("mysvg"));
+  </script>
+ </body>
+</html>
+

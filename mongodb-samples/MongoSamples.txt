@@ -1,0 +1,135 @@
+
+* List of users:
+Steve Smith1
+Steve Smith2
+Steve Smith3
+Steve Smith4
+Steve Smith5
+
+* List of last names:
+Smith1
+Smith2
+Smith3
+Smith4
+Smith5
+
+* Meta-characters and switches:
+$ matches the end of a line
+^ matches the beginning of a line
+i means "ignore case"
+
+Examples that reference the names listed above:
+/smith1/ does not match anything
+/smith1/i matches Smith1 because of "i" 
+/^S/ matches Smith1,Smith2,...,Smith5
+/5$/ matches Smith5
+
+* Some queries in mongo using "find"
+> db
+userdb
+----------------------------------------------------
+> db.users.count()
+5
+----------------------------------------------------
+> db.users.find()
+{
+   "_id" : ObjectId("53c43ec094a06d10fcf9fc89"),
+   "fname" : "Steve",
+   "lname" : "Smith1"
+}
+{
+   "_id" : ObjectId("53c43ec094a06d10fcf9fc8a"),
+   "fname" : "Steve",
+   "lname" : "Smith2"
+}
+{
+   "_id" : ObjectId("53c43ec094a06d10fcf9fc8b"),
+   "fname" : "Steve",
+   "lname" : "Smith3"
+}
+{
+   "_id" : ObjectId("53c43ec094a06d10fcf9fc8c"),
+   "fname" : "Steve",
+   "lname" : "Smith4"
+}
+{
+   "_id" : ObjectId("53c43ec094a06d10fcf9fc8d"),
+   "fname" : "Steve",
+   "lname" : "Smith5"
+}
+----------------------------------------------------
+> db.users.find({"lname":"Smith2"})
+{
+   "_id" : ObjectId("53c43ec094a06d10fcf9fc8a"),
+   "fname" : "Steve",
+   "lname" : "Smith2"
+}
+----------------------------------------------------
+> db.users.find({"fname":"Steve", "lname":"Smith2"})
+{
+   "_id" : ObjectId("53c43ec094a06d10fcf9fc8a"),
+   "fname" : "Steve",
+   "lname" : "Smith2"
+}
+----------------------------------------------------
+> db.users.find({"lname":"smith1"})
+>
+----------------------------------------------------
+> db.users.find({"lname":/smith1/i})
+{
+   "_id" : ObjectId("53c43ec094a06d10fcf9fc89"),
+   "fname" : "Steve",
+   "lname" : "Smith1"
+}
+----------------------------------------------------
+> db.users.find({"lname":/^smith1/i})
+{
+   "_id" : ObjectId("53c43ec094a06d10fcf9fc89"),
+   "fname" : "Steve",
+   "lname" : "Smith1"
+}
+----------------------------------------------------
+> db.users.find({"lname":/^S/})
+{
+   "_id" : ObjectId("53c43ec094a06d10fcf9fc89"),
+   "fname" : "Steve",
+   "lname" : "Smith1"
+}
+{
+   "_id" : ObjectId("53c43ec094a06d10fcf9fc8a"),
+   "fname" : "Steve",
+   "lname" : "Smith2"
+}
+{
+   "_id" : ObjectId("53c43ec094a06d10fcf9fc8b"),
+   "fname" : "Steve",
+   "lname" : "Smith3"
+}
+{
+   "_id" : ObjectId("53c43ec094a06d10fcf9fc8c"),
+   "fname" : "Steve",
+   "lname" : "Smith4"
+}
+{
+   "_id" : ObjectId("53c43ec094a06d10fcf9fc8d"),
+   "fname" : "Steve",
+   "lname" : "Smith5"
+}
+----------------------------------------------------
+
+> db.users.find({"lname":/smith1/i})
+> db.users.find({"lname": {$regex: 'smith1', $options: 'i'}})
+
+* Some queries in mongo using "findone"
+> db.users.findOne({"lname":"Smith5"})
+{
+   "_id" : ObjectId("53c43ec094a06d10fcf9fc8d"),
+   "fname" : "Steve",
+   "lname" : "Smith5"
+}
+
+Note: /^S/, /^S.*/, and /^S.*$/ match the same documents, 
+but performance is different:
+
+db.users.find({"lname": { $regex: /^S/, $nin: ['Smith4']})
+
